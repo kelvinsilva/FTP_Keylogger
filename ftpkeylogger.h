@@ -38,7 +38,6 @@ extern const string RegistryKeyName;
 
 extern char pathtofile[MAX_PATH];
 extern char ftpreadbuffer[1024];
-extern char error[4096];
 
 enum COMMAND{CONTINUE, PAUSE, KILL};
 

